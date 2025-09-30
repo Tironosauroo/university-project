@@ -18,9 +18,9 @@ public class InventoryItem
     }
 }
 
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, IInventoryQueue<InventoryItem> //double inheritance hierarchy
 {
-    [Header("HUD Слоти")]
+    [Header("HUD Slots")]
     [SerializeField] private UnityEngine.UI.Image mainSlotImage;
     [SerializeField] private UnityEngine.UI.Image subSlotImage;
 
@@ -28,7 +28,33 @@ public class Inventory : MonoBehaviour
     [SerializeField] private Transform hand;
     private GameObject currentItemInHand;
 
-    private Queue<InventoryItem> itemQueue = new Queue<InventoryItem>();
+    private InventoryQueue<InventoryItem> itemQueue = new InventoryQueue<InventoryItem>();
+    
+    //inventory interface Count delegation
+    public int Count => itemQueue.Count;
+
+    //inv. if. Enqueue() delegation
+    public void Enqueue(InventoryItem item)
+    {
+        itemQueue.Enqueue(item);
+        UpdateHUD();
+        UpdateHand();
+    }
+
+    //inv. if. Dequeue() delegation
+    public InventoryItem Dequeue()
+    {
+        InventoryItem item = itemQueue.Dequeue();
+        UpdateHUD();
+        UpdateHand();
+        return item;
+    }
+
+    //inv. if. ToArray() delegation
+    public InventoryItem[] IQtoArray()
+    {
+        return itemQueue.IQtoArray();
+    }
 
     private void Start()
     {
@@ -38,25 +64,21 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(InventoryItem newItem)
     {
-        itemQueue.Enqueue(newItem);
-        UpdateHUD();
-        UpdateHand();
+        Enqueue(newItem);
     }
 
     public void NextItem()
     {
-        if (itemQueue.Count > 1)
+        if (Count > 1)
         {
-            InventoryItem first = itemQueue.Dequeue();
-            itemQueue.Enqueue(first);
-            UpdateHUD();
-            UpdateHand();
+            InventoryItem first = Dequeue();
+            Enqueue(first);
         }
     }
 
     private void UpdateHUD()
     {
-        InventoryItem[] items = itemQueue.ToArray();
+        InventoryItem[] items = IQtoArray();
 
         // MainSlot
         if (items.Length > 0)
@@ -89,7 +111,7 @@ public class Inventory : MonoBehaviour
         if (currentItemInHand != null)
             Destroy(currentItemInHand);
 
-        InventoryItem[] items = itemQueue.ToArray();
+        InventoryItem[] items = IQtoArray();
 
         // if there is/are items in queue - adding it/them
         if (items.Length > 0 && items[0].prefab != null)

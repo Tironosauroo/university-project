@@ -988,8 +988,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87225ef86ea19b74090ac2f8dfe54c65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  speed: 6
-  crouchSpeed: 3
+  speed: 4
+  crouchSpeed: 2
   gravity: -9.81
   jumpHeight: 1.5
   cameraTransform: {fileID: 105898352}

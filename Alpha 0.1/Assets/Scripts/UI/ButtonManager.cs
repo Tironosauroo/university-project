@@ -40,6 +40,6 @@ public class ButtonManager : MonoBehaviour
 
     public void PlayGame()
     {
-
+        LevelManager.LoadFirstScene();
     }
 }

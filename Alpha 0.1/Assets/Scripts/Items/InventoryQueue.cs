@@ -61,6 +61,12 @@ public class InventoryQueue<T> : IInventoryQueue<T>
             newArray[i] = _array[(_head + i) % _capacity];
         }
 
+        // cleaning null pointers instead of garb. collector
+        for (int i = 0; i < _capacity; i++)
+        {
+            _array[i] = default(T);
+        }
+
         _array = newArray;
         _head = 0;
         _tail = _size;

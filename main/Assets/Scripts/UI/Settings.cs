@@ -1,17 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 public class Settings : MonoBehaviour
 {
-    
     public Slider volumeSlider;
-    public Dropdown qualityDropdown; 
-    public Dropdown resolutionDropdown; 
+    public TMP_Dropdown qualityDropdown;
+    public TMP_Dropdown resolutionDropdown;
     public Toggle fullscreenToggle;
 
     private List<Resolution> resolutions = new List<Resolution>();
+
+    void Start()
+    {
+        volumeSlider.value = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        qualityDropdown.value = PlayerPrefs.GetInt("QualityLevel", 2);
+        fullscreenToggle.isOn = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
+
+        resolutions = new List<Resolution>(Screen.resolutions);
+        resolutionDropdown.ClearOptions();
+        List<string> options = new List<string>();
+        int currentResolutionIndex = 0;
+        for (int i = 0; i < resolutions.Count; i++)
+        {
+            string option = resolutions[i].width + " x " + resolutions[i].height;
+            options.Add(option);
+            if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
+            {
+                currentResolutionIndex = i;
+            }
+        }
+        resolutionDropdown.AddOptions(options);
+        resolutionDropdown.value = PlayerPrefs.GetInt("ResolutionIndex", currentResolutionIndex);
+    }
 
     public void SetMasterVolume()
     {
@@ -30,7 +53,6 @@ public class Settings : MonoBehaviour
 
     public void SetResolution(int index)
     {
-        
         if (resolutions != null && index < resolutions.Count)
         {
             Resolution res = resolutions[index];
@@ -46,5 +68,4 @@ public class Settings : MonoBehaviour
         PlayerPrefs.SetInt("Fullscreen", isFullscreen ? 1 : 0);
         PlayerPrefs.Save();
     }
-
 }

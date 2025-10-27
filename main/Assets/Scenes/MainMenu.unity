@@ -5016,8 +5016,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ScriptsDef::Settings
   volumeSlider: {fileID: 1605259239}
-  qualityDropdown: {fileID: 0}
-  resolutionDropdown: {fileID: 0}
+  qualityDropdown: {fileID: 123409746}
+  resolutionDropdown: {fileID: 2095222146}
   fullscreenToggle: {fileID: 1033987316}
 --- !u!1 &1898939705
 GameObject:

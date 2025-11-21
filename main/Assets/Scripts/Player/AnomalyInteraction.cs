@@ -16,6 +16,7 @@ public class AnomalyInteraction : MonoBehaviour
     public AudioClip fixSuccessSound;
 
     private bool isFixed = false;
+    public bool IsFixed => isFixed;
     private AudioSource audioSource;
 
     private void Start()

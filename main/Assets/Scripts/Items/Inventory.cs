@@ -20,6 +20,14 @@ public class InventoryItem
 
 public class Inventory : MonoBehaviour, IInventoryQueue<InventoryItem> //double inheritance hierarchy
 {
+    public static Inventory Instance;
+    private void Awake()
+    {
+        // Ініціалізація Singleton
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
     [Header("HUD Slots")]
     [SerializeField] private UnityEngine.UI.Image mainSlotImage;
     [SerializeField] private UnityEngine.UI.Image subSlotImage;
@@ -54,6 +62,15 @@ public class Inventory : MonoBehaviour, IInventoryQueue<InventoryItem> //double 
     public InventoryItem[] IQtoArray()
     {
         return itemQueue.IQtoArray();
+    }
+
+    public InventoryItem Peek()
+    {
+        // Тобі потрібно додати метод Peek() в твій InventoryQueue.cs, 
+        // АБО використовувати IQtoArray()[0], що ми і зробимо для надійності:
+        var items = IQtoArray();
+        if (items.Length > 0) return items[0];
+        return null;
     }
 
     private void Start()

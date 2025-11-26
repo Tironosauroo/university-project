@@ -4,7 +4,11 @@ using UnityEngine.InputSystem;
 public class PlayerInteraction : MonoBehaviour
 {
     [Header("HUD for Pickable Items")]
-    [SerializeField] private GameObject hud;  // HUD inside Canvas
+    [SerializeField] private GameObject hud;
+
+    [Header("Anomaly Interaction")]
+    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private float interactionDistance = 3f;
 
     private PlayerControls controls;
     private GameObject currentPickable;
@@ -14,25 +18,33 @@ public class PlayerInteraction : MonoBehaviour
     {
         controls = new PlayerControls();
 
-        // subscribe on events
         controls.Player.Interact.started += ctx => Interact();
+
+        controls.Player.Attack.started += ctx => TryFixAnomaly();
 
         inventory = GetComponent<Inventory>();
         controls.Player.NextItemQueue.started += ctx => inventory?.NextItem();
+    }
+
+    private void Start()
+    {
+        if (cameraTransform == null)
+        {
+            cameraTransform = Camera.main.transform;
+        }
     }
 
     private void OnEnable()
     {
         controls.Enable();
         if (hud != null)
-            hud.SetActive(false); // default disabled HUD cursor
+            hud.SetActive(false);
     }
 
     private void OnDisable()
     {
         controls.Disable();
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Pickable"))
@@ -61,15 +73,13 @@ public class PlayerInteraction : MonoBehaviour
 
             if (inventory != null && itemSprite != null)
             {
-                // clone of active item
                 GameObject clone = Instantiate(currentPickable);
-                clone.SetActive(true); // must be true for OK copy
-                clone.transform.SetParent(null); // removing from scene
+                clone.SetActive(true);
+                clone.transform.SetParent(null);
                 clone.transform.position = Vector3.zero;
                 clone.transform.rotation = Quaternion.identity;
-                clone.tag = "Untagged"; // no infinite picking
+                clone.tag = "Untagged";
 
-                // adding copy to queue
                 inventory.AddItem(new InventoryItem(currentPickable.name, itemSprite, clone));
             }
 
@@ -78,6 +88,22 @@ public class PlayerInteraction : MonoBehaviour
 
             if (hud != null)
                 hud.SetActive(false);
+        }
+    }
+
+    private void TryFixAnomaly()
+    {
+        Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, interactionDistance))
+        {
+            AnomalyInteraction anomaly = hit.collider.GetComponent<AnomalyInteraction>();
+
+            if (anomaly != null)
+            {
+                anomaly.TryFix();
+            }
         }
     }
 }

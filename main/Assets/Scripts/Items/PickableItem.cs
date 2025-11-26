@@ -7,5 +7,8 @@ public class PickableItem : MonoBehaviour
 
     [Header("InHand Rotation")] // for custom rotation in hand
     public Vector3 handRotation = Vector3.zero;
+
+    [Header("Item Type")]
+    public ItemType itemType;
 }
 

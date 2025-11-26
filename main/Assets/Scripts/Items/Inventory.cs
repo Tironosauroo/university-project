@@ -23,7 +23,7 @@ public class Inventory : MonoBehaviour, IInventoryQueue<InventoryItem> //double 
     public static Inventory Instance;
     private void Awake()
     {
-        // Ініціалізація Singleton
+        // Singleton
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
@@ -66,8 +66,6 @@ public class Inventory : MonoBehaviour, IInventoryQueue<InventoryItem> //double 
 
     public InventoryItem Peek()
     {
-        // Тобі потрібно додати метод Peek() в твій InventoryQueue.cs, 
-        // АБО використовувати IQtoArray()[0], що ми і зробимо для надійності:
         var items = IQtoArray();
         if (items.Length > 0) return items[0];
         return null;

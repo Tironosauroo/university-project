@@ -5,8 +5,8 @@ public class AnomalyInteraction : MonoBehaviour
 {
     [Header("Settings")]
     public ItemType requiredItem;
-    public GameObject normalState;   // Стан "Виправлено"
-    public GameObject anomalyState;  // Стан "Аномалія"
+    public GameObject normalState;
+    public GameObject anomalyState;
 
     [Header("Audio")]
     [Tooltip("Звук, який грає, поки аномалія активна (може бути пустим)")]
@@ -21,17 +21,14 @@ public class AnomalyInteraction : MonoBehaviour
 
     private void Start()
     {
-        // Налаштування звуку
         audioSource = GetComponent<AudioSource>();
         audioSource.playOnAwake = false;
-        audioSource.loop = true; // Зациклюємо звук аномалії
-        audioSource.spatialBlend = 1.0f; // 3D звук
+        audioSource.loop = true;
+        audioSource.spatialBlend = 1.0f;
 
-        // Запуск аномалії
         SetAnomalyState(true);
     }
 
-    // true = аномалія активна, false = виправлено
     public void SetAnomalyState(bool isActive)
     {
         isFixed = !isActive;
@@ -39,7 +36,6 @@ public class AnomalyInteraction : MonoBehaviour
         if (normalState) normalState.SetActive(!isActive);
         if (anomalyState) anomalyState.SetActive(isActive);
 
-        // Логіка звуку
         if (isActive)
         {
             if (activeLoopSound != null)
@@ -50,7 +46,6 @@ public class AnomalyInteraction : MonoBehaviour
         }
         else
         {
-            // Якщо виправили - зупиняємо шум
             audioSource.Stop();
         }
     }
@@ -61,7 +56,6 @@ public class AnomalyInteraction : MonoBehaviour
 
         if (Inventory.Instance == null) return;
 
-        // Перевіряємо перший предмет через твій метод масиву
         var items = Inventory.Instance.IQtoArray();
 
         if (items.Length > 0 && items[0] != null)
@@ -72,16 +66,12 @@ public class AnomalyInteraction : MonoBehaviour
             {
                 Debug.Log("ANOMALY FIXED!");
 
-                // 1. Граємо звук успіху (окремо, в точці, щоб не обірвався)
                 if (fixSuccessSound != null)
                 {
                     AudioSource.PlayClipAtPoint(fixSuccessSound, transform.position);
                 }
 
-                // 2. Вимикаємо аномалію
-                SetAnomalyState(false); // Це зупинить activeLoopSound і змінить моделі
-
-                // 3. [ЗМІНА] Замість видалення - прокручуємо інвентар
+                SetAnomalyState(false);
                 Inventory.Instance.NextItem();
             }
         }

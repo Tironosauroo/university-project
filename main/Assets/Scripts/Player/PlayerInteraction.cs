@@ -4,11 +4,11 @@ using UnityEngine.InputSystem;
 public class PlayerInteraction : MonoBehaviour
 {
     [Header("HUD for Pickable Items")]
-    [SerializeField] private GameObject hud;  // HUD inside Canvas
+    [SerializeField] private GameObject hud;
 
-    [Header("Anomaly Interaction")] // [НОВЕ] Налаштування для лагодження
-    [SerializeField] private Transform cameraTransform; // Сюди перетягни Main Camera
-    [SerializeField] private float interactionDistance = 3f; // Як далеко дістає гравець
+    [Header("Anomaly Interaction")]
+    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private float interactionDistance = 3f;
 
     private PlayerControls controls;
     private GameObject currentPickable;
@@ -18,11 +18,8 @@ public class PlayerInteraction : MonoBehaviour
     {
         controls = new PlayerControls();
 
-        // 1. Підбір предметів (Твій старий код)
         controls.Player.Interact.started += ctx => Interact();
 
-        // 2. Лагодження аномалій (Ліва кнопка миші) - [НОВЕ]
-        // Переконайся, що в Input Actions дія називається "Attack"
         controls.Player.Attack.started += ctx => TryFixAnomaly();
 
         inventory = GetComponent<Inventory>();
@@ -31,7 +28,6 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Start()
     {
-        // [НОВЕ] Автоматично знаходимо камеру, якщо ти забув перетягнути її в інспекторі
         if (cameraTransform == null)
         {
             cameraTransform = Camera.main.transform;
@@ -49,8 +45,6 @@ public class PlayerInteraction : MonoBehaviour
     {
         controls.Disable();
     }
-
-    // --- ТВОЯ ЛОГІКА ПІДБОРУ (НЕ ЗМІНЮВАЛАСЬ) ---
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Pickable"))
@@ -97,23 +91,17 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    // --- НОВА ЛОГІКА ДЛЯ АНОМАЛІЙ ---
-
     private void TryFixAnomaly()
     {
-        // Створюємо невидимий промінь з центру камери вперед
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
         RaycastHit hit;
 
-        // Якщо промінь влучив у щось на відстані 3 метри
         if (Physics.Raycast(ray, out hit, interactionDistance))
         {
-            // Перевіряємо, чи є на цьому об'єкті скрипт AnomalyInteraction
             AnomalyInteraction anomaly = hit.collider.GetComponent<AnomalyInteraction>();
 
             if (anomaly != null)
             {
-                // Якщо так - намагаємось полагодити
                 anomaly.TryFix();
             }
         }

@@ -1,9 +1,9 @@
 public enum ItemType
 {
     None,
-    FireExtinguisher,
+    Diskette,
     Flashlight,
-    Key,
-    TeddyBear,
+    Transmitter,
+    Camera,
     Any
 }
